@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Ticketing System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #5c6bc0;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        label {
+            font-size: 16px;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+        input[type="checkbox"] {
+            margin-top: 5px;
+        }
+        button {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3f51b5;
+        }
+        .alert {
+            color: #4caf50;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emotional Ticketing System</h1>
+        
+        <form id="ticketForm" action="/submit" method="post">
+            <textarea id="ticketContent" rows="4" placeholder="Enter your message here"></textarea><br>
+            <label for="anonymous">Submit anonymously</label>
+            <input type="checkbox" id="anonymous"><br>
+            <button type="submit">Submit Ticket</button>
+        </form>
+        
+        <div class="alert success">Ticket submitted successfully!</div>
+        <div class="alert error">Error submitting ticket. Please try again.</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('ticketForm');
+        const successAlert = document.querySelector('.alert.success');
+        const errorAlert = document.querySelector('.alert.error');
+        
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const content = document.getElementById('ticketContent').value;
+            const anonymous = document.getElementById('anonymous').checked;
+            
+            const data = {
+                content: content,
+                anonymous: anonymous
+            };
+            
+            fetch('http://localhost:8080/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                successAlert.style.display = 'block';
+                form.reset(); // Reset form after submission
+                setTimeout(() => successAlert.style.display = 'none', 4000); // Hide success message after 4 seconds
+            })
+            .catch(error => {
+                errorAlert.style.display = 'block';
+                console.error(error);
+                setTimeout(() => errorAlert.style.display = 'none', 4000); // Hide error message after 4 seconds
+            });
+        });
+    </script>
+</body>
+</html>
